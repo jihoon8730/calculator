@@ -11,7 +11,7 @@ body {
 .number-view {
   width: 320px;
   height: 70px;
-  border-radius: 10px 10px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
   background-color: gray;
   color: #fff;
 }
@@ -45,7 +45,11 @@ body {
 .number-btn-orange {
   width: 80px;
   height: 50px;
-  background-color: orange;
+  background-color: rgb(253, 193, 81);
   color: #fff;
   font-size: 20px;
+}
+
+.orange-color {
+  color: rgb(250, 196, 95);
 }
