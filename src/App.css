@@ -24,7 +24,14 @@ body {
 }
 
 .view-number-title {
-  padding-right: 10px;
+  width: 250px;
+  padding: 20px;
+  font-size: 30px;
+  text-align: end;
+  background-color: gray;
+  color: #fff;
+  border: 0px;
+  outline-style: none;
 }
 
 .number-btn {

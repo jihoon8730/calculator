@@ -18,9 +18,9 @@ function App() {
   // 숫자값 state
   const onClickNumber = (number) => {
     if (!operator) {
-      setNumOne([...numOne , number]);
+      setNumOne([...numOne , number].join(''));
     } else {
-      setNumTwo([...numTwo , number]);
+      setNumTwo([...numTwo , number].join(''));
     } 
   }
 
@@ -31,15 +31,57 @@ function App() {
     setNumTwo('');
     setResult('');
   }
+
+  const handleOperator = () => {
+    if ((operator === undefined) || (operator === '')) {
+      alert('연산기호를 넣어주세요');
+      setNumOne('');
+      return false;
+    } else if (operator === '+') {
+      return setResult(parseInt(numOne) + parseInt(numTwo));
+    } else if (operator === '-') {
+      return setResult(parseInt(numOne) - parseInt(numTwo));
+    } else if (operator === 'X') {
+      return setResult(parseInt(numOne) * parseInt(numTwo));
+    } else if (operator === '/') {
+      return setResult((parseInt(numOne) / parseInt(numTwo)).toFixed(3));
+    } 
+  }
+
+  // 키보드 숫자패드 입력하기
+  // 순서 정리
+  // 1. 키보드를 누를 때
+  // - 키보드 넘버 1을 누르면 onClickNumber('1')이 들어간다
+  // - 키보드 넘버 2을 누르면 onClickNumber('2')이 들어간다
+  // - 키보드 넘버 3을 누르면 onClickNumber('3')이 들어간다
+  // 2. keyboard value를 가져온다
+  // - key와 관련된 이벤트 사용(onkeydown, onkeyup 등등) 
+  // - keyboard를 눌렀을때 keyvalue를 가져 올 수 있는 메소드 사용 = event.key를 사용하여 onkeyDown을 했을 때 내가 누른 key의 value 값을 가져옴
+  // - console.log로 확인
   console.log(numOne, numTwo);
   console.log(result);
   return (
-    <div className='wrap'>
+    <div className='wrap' onKeyDown={(e) => {
+      console.log(e.key);
+      if (isFinite(e.key)) {
+        return onClickNumber(e.key);
+      } else if (e.key === '+') {
+        return setOperator('+');
+      } else if (e.key === '-') {
+        return setOperator('-');
+      } else if (e.key === '*') {
+        return setOperator('X');
+      } else if (e.key === '/') {
+        return setOperator('/');
+      } else if (e.key === 'Enter') {
+        return handleOperator();
+      } else if (e.key === 'Escape') {
+        return onClickClear();
+      }
+    }}>
       <div className='number-view'>
         <div className='view-number'>
-          <div className='view-number-title'>
-            {result ? result : operator ? numTwo : numOne}
-          </div>
+          <input className='view-number-title' readOnly="this.blur()" type="text" value={result ? result : operator ? numTwo : numOne} />
         </div>
       </div>
       <div className='numbers'>
@@ -90,24 +132,9 @@ function App() {
           onClickNumber('0');
         }}>0</button>
 
-        <button className='number-btn' onClick={() => {
-          // 나눗셈 관련 에러
-          // 정확히 떨어지지 않는 수를 계산시 계산 불가
-          // 해결 방안
-          // 1. 소숫점을 두자리수 정도만 끊어내는 메소드? 필요함
-          if (operator === '+') {
-            return setResult(parseInt(numOne.join('')) + parseInt(numTwo.join('')));
-          } else if (operator === '-') {
-            return setResult(parseInt(numOne.join('')) - parseInt(numTwo.join('')));
-          } else if (operator === 'X') {
-            return setResult(parseInt(numOne.join('')) * parseInt(numTwo.join('')));
-          } else if (operator === '/') {
-            return setResult((parseInt(numOne.join(''))) / parseInt(numTwo.join(''))) ;
-          } 
-        }}>=</button>
+        <button className='number-btn' onClick={handleOperator}>=</button>
         <button className='number-btn-orange' onClick={() => {
           setOperator('/');
-          console.log(operator)
         }}>/</button>
       </div>
     </div>
