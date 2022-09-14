@@ -1,7 +1,23 @@
 import './App.css';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function App() {
+
+  //debouncing 예제 코드 작성 중
+  const useDebouncedEffect = (func, delay, deps) => {
+    const callback = useCallback(func, deps);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        callback();
+      }, delay);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [callback, delay]);
+  };
+
   const [numOne, setNumOne] = useState([]);
   const [numTwo, setNumTwo] = useState([]);
   // State에 버튼1 클릭하면 numOwn배열안에 1값이 push
@@ -47,6 +63,7 @@ function App() {
       return setResult((parseFloat(numOne) / parseFloat(numTwo)).toFixed(2));
     } 
   }
+
   // 키보드 숫자패드 입력하기
   // 순서 정리
   // 1. 키보드를 누를 때
@@ -68,7 +85,7 @@ function App() {
   // ----문제점-----
   // 소수점이 하나만 찍혀야 하지만 현제 버튼을 클릭할때마다 눌리고 있다
   // 해결하기 위해 cto님 trottleling, debouncing개념의 키워드를 주셨다
-  // 현재 접목해야할 개념으로는 debouncing개념과 적합하다고 판다
+  // 현재 접목해야할 개념으로는 debouncing(디바운싱)
   const handleKeyboardOperator = (e) => {
     if (isFinite(e.key)) {
       return onClickNumber(e.key);
@@ -85,10 +102,7 @@ function App() {
     } else if (e.key === 'Escape') {
       return onClickClear();
     } else if (e.key === '.') {
-      setTimeout(() => {
-        onClickNumber(e.key);
-      }, 5000)
-      // onClickNumber(e.key);
+      return onClickNumber(e.key);
     }
   }
   console.log(numOne, numTwo);
@@ -154,9 +168,7 @@ function App() {
         }}>/</button>
       </div>
       <div className='numbers'>
-      <button className='number-btn' onClick={() => {
-          onClickNumber('.');
-        }}>.</button>
+      <button className='number-btn' onClick={useDebouncedEffect}>.</button>
       </div>
     </div>
   );
