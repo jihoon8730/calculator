@@ -7,12 +7,11 @@ body {
   height: auto;
   margin: 50px auto;
 }
-
 .number-view {
   width: 320px;
   height: 70px;
   border-radius: 5px 5px 0px 0px;
-  background-color: gray;
+  background-color: rgb(90, 90, 90);
   color: #fff;
 }
 
@@ -25,10 +24,10 @@ body {
 
 .view-number-title {
   width: 250px;
-  padding: 20px;
+  padding: 20px 20px 0px 20px;
   font-size: 30px;
   text-align: end;
-  background-color: gray;
+  background-color: rgb(90, 90, 90);;
   color: #fff;
   border: 0px;
   outline-style: none;
@@ -37,17 +36,44 @@ body {
 .number-btn {
   width: 80px;
   height: 50px;
+  border: 0.5px solid gray;
   background-color: rgb(139, 139, 139);
   color: #fff;
   font-size: 20px;
 }
 
+.number-btn:hover {
+  background-color: gray;
+  opacity: 0.7;
+}
+
+.number-btn-dot {
+  width: 320px;
+  height: 50px;
+  border: 0.5px solid gray;
+  background-color: rgb(139, 139, 139);
+  color: #fff;
+  font-size: 30px;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.number-btn-dot:hover {
+  background-color: gray;
+  opacity: 0.7;
+}
+
 .number-btn-orange {
   width: 80px;
   height: 50px;
+  border: 0.5px solid rgb(172, 172, 172);
   background-color: rgb(253, 193, 81);
   color: #fff;
   font-size: 20px;
+}
+
+.number-btn-orange:hover {
+  background-color: rgb(252, 198, 96);
+  opacity: 0.7;
 }
 
 .orange-color {
