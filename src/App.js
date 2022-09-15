@@ -33,25 +33,31 @@ function App() {
     setResult('');
   }
 
+  // 정확한 계산을 위해 실수 계산을 할때에는 Math.ceil()같은 메소드를 사용하거나 정수로 변환을 하여 사용하는게 좋다
   const handleOperator = () => {
     if (operator === '+') {
-      setResult(Math.round((parseFloat(numOne) + parseFloat(numTwo)) * 100) / 100);
+      setResult(parseFloat(numOne) + parseFloat(numTwo));
     } else if (operator === '-') {
-      setResult(Math.round((parseFloat(numOne) - parseFloat(numTwo)) * 100) / 100);
+      setResult(parseFloat(numOne) - parseFloat(numTwo));
     } else if (operator === 'X') {
       setResult(parseFloat(numOne) * parseFloat(numTwo));
     } else if (operator === '/') {
-      setResult((parseFloat(numOne) / parseFloat(numTwo)).toFixed(2));
+      setResult(parseFloat(numOne) / parseFloat(numTwo));
     }
-      setNumOne(result);
       setOperator('');
       setNumTwo(''); 
   }
-  console.log("numOne: ", numOne, "numTwo: ", numTwo);
-  console.log("result: ",result);
-  
-  
-  
+
+  useEffect(() => {
+    console.log("numeOne: ", numOne, "numTwo: " , numTwo);
+  }, [numOne, numTwo]);
+
+  useEffect(() => {
+    console.log("result: ", result);
+    if (result) {
+      setNumOne(result);
+    }
+  }, [result])
   
 
   // 계산식 여러번 작성하기 순서도
@@ -114,11 +120,25 @@ function App() {
       return onClickNumber(e.key);
     }
   }
+
+  const doCopy = text => {
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          alert("클립보드에 복사되었습니다.");
+        })
+        .catch(() => {
+          alert("복사를 다시 시도해주세요.");
+        });
+    }
+  }
   return (
+    <>
     <div className='wrap' onKeyDown={handleKeyboardOperator}>
       <div className='number-view'>
         <div className='view-number'>
-          <input className='view-number-title' readOnly="this.blur()" type="text" value={result ? result : operator ? numTwo : numOne} />
+          <input className='view-number-title' readOnly="this.blur()" type="text" value={operator ? numTwo : numOne} />
         </div>
       </div>
       <div className='numbers'>
@@ -168,7 +188,6 @@ function App() {
         <button className='number-btn' onClick={() => {
           onClickNumber('0');
         }}>0</button>
-
         <button className='number-btn orange-color' onClick={handleOperator}>=</button>
         <button className='number-btn-orange' onClick={() => {
           setOperator('/');
@@ -180,6 +199,8 @@ function App() {
       }}>.</button>
       </div>
     </div>
+    <button onClick={() => doCopy('복사할텍스트입니다!')}>복사하기</button>
+    </>
   );
 }
 export default App;
