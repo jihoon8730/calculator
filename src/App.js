@@ -3,13 +3,9 @@ import {  useEffect, useState } from 'react';
 
 function App() {
 
-  const [numOne, setNumOne] = useState('');
-  const [numTwo, setNumTwo] = useState('');
-  // State에 버튼1 클릭하면 numOwn배열안에 1값이 push
-  // 버튼1 클릭하면 numOwn배열안에 1값이 push
-  // 버튼2 클릭하면 numOwn배열안에 2값이 push
-  // 버튼3 클릭하면 numOwn배열안에 3값이 push
-
+  const [firstCalcNumber, setFirstCalcNumber] = useState('');
+  const [secondCalcNumber, setSecondCalcNumber] = useState('');
+  
   // 연산자 state
   const [operator, setOperator] = useState();
 
@@ -19,47 +15,64 @@ function App() {
   // 숫자값 state
   const onClickNumber = (number) => {
     if (!operator) {
-      setNumOne([...numOne , number].join(''));
+      setFirstCalcNumber([...firstCalcNumber , number].join(''));
     } else {
-      setNumTwo([...numTwo , number].join(''));
+      setSecondCalcNumber([...secondCalcNumber , number].join(''));
     } 
   }
 
   //clear 함수
   const onClickClear = () => {
     setOperator('');
-    setNumOne('');
-    setNumTwo('');
+    setFirstCalcNumber('');
+    setSecondCalcNumber('');
     setResult('');
   }
 
   // 정확한 계산을 위해 실수 계산을 할때에는 Math.ceil()같은 메소드를 사용하거나 정수로 변환을 하여 사용하는게 좋다
   const handleOperator = () => {
     if (operator === '+') {
-      setResult(parseFloat(numOne) + parseFloat(numTwo));
+      setResult(parseFloat(firstCalcNumber) + parseFloat(secondCalcNumber));
     } else if (operator === '-') {
-      setResult(parseFloat(numOne) - parseFloat(numTwo));
+      setResult(parseFloat(firstCalcNumber) - parseFloat(secondCalcNumber));
     } else if (operator === 'X') {
-      setResult(parseFloat(numOne) * parseFloat(numTwo));
+      setResult(parseFloat(firstCalcNumber) * parseFloat(secondCalcNumber));
     } else if (operator === '/') {
-      setResult(parseFloat(numOne) / parseFloat(numTwo));
+      setResult(parseFloat(firstCalcNumber) / parseFloat(secondCalcNumber));
     }
       setOperator('');
-      setNumTwo(''); 
+      setSecondCalcNumber(''); 
+  }
+
+  const checkOperator = () => {
+    if (!operator) {
+      alert("연산기호를 입력해 주세요");
+    }
   }
 
   useEffect(() => {
-    console.log("numeOne: ", numOne, "numTwo: " , numTwo);
-  }, [numOne, numTwo]);
+    if (result === 0) {
+      alert("결과값이 0 입니다");
+      onClickClear();
+    } else if (result === Infinity) {
+      alert("숫자가 아닙니다");
+      onClickClear();
+    }
+  },[result]);
 
   useEffect(() => {
     console.log("result: ", result);
     if (result) {
-      setNumOne(result);
+      setFirstCalcNumber(result);
     }
   }, [result])
   
 
+  useEffect(() => {
+    console.log("numeOne: ", firstCalcNumber, "numTwo: " , secondCalcNumber, "operator", operator);
+  }, [firstCalcNumber, secondCalcNumber]);
+
+  
   // 계산식 여러번 작성하기 순서도
   // 계산순서 (숫자 => 연산자 => 숫자 => 연산자 => 결과값 => 숫자 => 연산자 => 결과값 => 숫자 => 연산자 => 결과값)
   // 1. 숫자 버튼을 클릭하면 숫자의 value를 state에 담기
@@ -103,42 +116,30 @@ function App() {
 
   const handleKeyboardOperator = (e) => {
     if (isFinite(e.key)) {
-      return onClickNumber(e.key);
+      onClickNumber(e.key);
     } else if (e.key === '+') {
-      return setOperator('+');
+      setOperator('+');
     } else if (e.key === '-') {
-      return setOperator('-');
+      setOperator('-');
     } else if (e.key === '*') {
-      return setOperator('X');
+      setOperator('X');
     } else if (e.key === '/') {
-      return setOperator('/');
+      setOperator('/');
     } else if (e.key === 'Enter') {
-      return handleOperator();
+      handleOperator();
     } else if (e.key === 'Escape') {
-      return onClickClear();
+      onClickClear();
     } else if (e.key === '.') {
-      return onClickNumber(e.key);
+      onClickNumber(e.key);
     }
   }
 
-  const doCopy = text => {
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          alert("클립보드에 복사되었습니다.");
-        })
-        .catch(() => {
-          alert("복사를 다시 시도해주세요.");
-        });
-    }
-  }
   return (
     <>
     <div className='wrap' onKeyDown={handleKeyboardOperator}>
       <div className='number-view'>
         <div className='view-number'>
-          <input className='view-number-title' readOnly="this.blur()" type="text" value={operator ? numTwo : numOne} />
+          <input className='view-number-title' readOnly="this.blur()" type="text" value={secondCalcNumber ? secondCalcNumber : firstCalcNumber} />
         </div>
       </div>
       <div className='numbers'>
@@ -152,6 +153,7 @@ function App() {
           onClickNumber('9');
         }}>9</button>
         <button className='number-btn-orange' onClick={() => {
+          handleOperator()
           setOperator('X');
         }}>X</button>
       </div>
@@ -166,6 +168,7 @@ function App() {
           onClickNumber('6');
         }}>6</button>
         <button className='number-btn-orange' onClick={() => {
+          handleOperator()
           setOperator('-');
         }}>-</button>
       </div>
@@ -180,6 +183,7 @@ function App() {
           onClickNumber('3');
         }}>3</button>
         <button className='number-btn-orange' onClick={() => {
+          handleOperator();
           setOperator('+');
         }}>+</button>
       </div>
@@ -188,8 +192,12 @@ function App() {
         <button className='number-btn' onClick={() => {
           onClickNumber('0');
         }}>0</button>
-        <button className='number-btn orange-color' onClick={handleOperator}>=</button>
+        <button className='number-btn orange-color' onClick={() => {
+          handleOperator()
+          checkOperator();
+          }}>=</button>
         <button className='number-btn-orange' onClick={() => {
+          handleOperator();
           setOperator('/');
         }}>/</button>
       </div>
@@ -199,7 +207,6 @@ function App() {
       }}>.</button>
       </div>
     </div>
-    <button onClick={() => doCopy('복사할텍스트입니다!')}>복사하기</button>
     </>
   );
 }
