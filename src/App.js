@@ -7,10 +7,10 @@ function App() {
   const [secondCalcNumber, setSecondCalcNumber] = useState('');
   
   // 연산자 state
-  const [operator, setOperator] = useState();
+  const [operator, setOperator] = useState('');
 
   // 결과값 state
-  const [result, setResult] = useState();
+  const [result, setResult] = useState('');
   
   // 숫자값 state
   const onClickNumber = (number) => {
@@ -20,6 +20,8 @@ function App() {
       setSecondCalcNumber([...secondCalcNumber , number].join(''));
     } 
   }
+  
+  //render, input 구분
 
   //clear 함수
   const onClickClear = () => {
@@ -50,6 +52,35 @@ function App() {
     }
   }
 
+  const handleKeyboardOperator = (e) => {
+    if (isFinite(e.key)) {
+      onClickNumber(e.key);
+    } else if (e.key === '+') {
+      setOperator('+');
+    } else if (e.key === '-') {
+      setOperator('-');
+    } else if (e.key === '*') {
+      setOperator('X');
+    } else if (e.key === '/') {
+      setOperator('/');
+    } else if (e.key === 'Enter') {
+      handleOperator();
+    } else if (e.key === 'Escape') {
+      onClickClear();
+    } else if (e.key === '.') {
+      checkDot(e.key);
+    }
+  }
+
+  const checkDot = () => {
+    if (!operator && !firstCalcNumber.includes('.')) {
+      onClickNumber('.');
+    }
+    if (operator && !secondCalcNumber.includes('.')) {
+      onClickNumber('.');
+    }
+  }
+
   useEffect(() => {
     if (result === 0) {
       alert("결과값이 0 입니다");
@@ -66,13 +97,15 @@ function App() {
       setFirstCalcNumber(result);
     }
   }, [result])
-  
 
   useEffect(() => {
-    console.log("numeOne: ", firstCalcNumber, "numTwo: " , secondCalcNumber, "operator", operator);
-  }, [firstCalcNumber, secondCalcNumber]);
 
-  
+  })
+
+  // useEffect(() => {
+  //   console.log("firstCalcNumber: ", firstCalcNumber, "secondCalcNumber: " , secondCalcNumber, "operator", operator);
+  // }, []);
+
   // 계산식 여러번 작성하기 순서도
   // 계산순서 (숫자 => 연산자 => 숫자 => 연산자 => 결과값 => 숫자 => 연산자 => 결과값 => 숫자 => 연산자 => 결과값)
   // 1. 숫자 버튼을 클릭하면 숫자의 value를 state에 담기
@@ -110,33 +143,14 @@ function App() {
   // 6. ESC 키보드를 누를시 onClickClear함수 실행
   // 7. 소수점 계산 기능 추가 
   // ----문제점-----
+
   // 소수점이 하나만 찍혀야 하지만 현제 버튼을 클릭할때마다 눌리고 있다
   // 해결하기 위해 cto님 trottleling, debouncing개념의 키워드를 주셨다
   // 현재 접목해야할 개념으로는 debouncing(디바운싱)
 
-  const handleKeyboardOperator = (e) => {
-    if (isFinite(e.key)) {
-      onClickNumber(e.key);
-    } else if (e.key === '+') {
-      setOperator('+');
-    } else if (e.key === '-') {
-      setOperator('-');
-    } else if (e.key === '*') {
-      setOperator('X');
-    } else if (e.key === '/') {
-      setOperator('/');
-    } else if (e.key === 'Enter') {
-      handleOperator();
-    } else if (e.key === 'Escape') {
-      onClickClear();
-    } else if (e.key === '.') {
-      onClickNumber(e.key);
-    }
-  }
-
   return (
     <>
-    <div className='wrap' onKeyDown={handleKeyboardOperator}>
+    <div className="wrap" onKeyDown={handleKeyboardOperator}>
       <div className='number-view'>
         <div className='view-number'>
           <input className='view-number-title' readOnly="this.blur()" type="text" value={secondCalcNumber ? secondCalcNumber : firstCalcNumber} />
@@ -202,9 +216,16 @@ function App() {
         }}>/</button>
       </div>
       <div className='numbers'>
-      <button className='number-btn-dot' onClick={() => {
-        onClickNumber('.');
-      }}>.</button>
+      <button className='number-btn-dot' onClick={
+        // 조건식(if)를 통한 소수점 한번만 찍기
+        // 현재의 문제점 
+        // 소수점이 ....계속 찍히는 현상
+        // 시도해본 방향
+        // if문을 통해 첫번째 숫자 배열안에 닷 기호가 없으면 닷 추가 두번째 숫자가 들어갈 배열안에 닷 기호가 없으면 닷 추가
+        // 그렇게 시도해보니 문제점
+        // 첫번째 숫자 배열안에서는 닷추가가 한번만 성공적으로 잘됨
+        // 그러나 두번째 숫자 배열안에서 부터는 안되거나 여전히 계속 ...찍히는 현상이 발생됨
+        checkDot}>.</button>
       </div>
     </div>
     </>
