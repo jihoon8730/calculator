@@ -30,15 +30,17 @@ function App() {
     setSecondCalcNumber('');
     setResult('');
   }
+  
 
   // 정확한 계산을 위해 실수 계산을 할때에는 Math.ceil()같은 메소드를 사용하거나 정수로 변환을 하여 사용하는게 좋다
+  // 예시) 0.100000000000와 같은 부정확한 계산을 해야할때는 toFixed()와 같이 어림수를 만들어 줘야 한다 .. 모던 자바스크립트
   const handleOperator = () => {
     if (operator === '+') {
-      setResult(parseFloat(firstCalcNumber) + parseFloat(secondCalcNumber));
+      setResult(Math.floor((parseFloat(firstCalcNumber) + parseFloat(secondCalcNumber)) * 1000) / 1000);
     } else if (operator === '-') {
-      setResult(parseFloat(firstCalcNumber) - parseFloat(secondCalcNumber));
+      setResult(Math.floor((parseFloat(firstCalcNumber) - parseFloat(secondCalcNumber)) * 1000) / 1000);
     } else if (operator === 'X') {
-      setResult(parseFloat(firstCalcNumber) * parseFloat(secondCalcNumber));
+      setResult(Math.floor((parseFloat(firstCalcNumber) * parseFloat(secondCalcNumber)) * 1000) / 1000);
     } else if (operator === '/') {
       setResult(parseFloat(firstCalcNumber) / parseFloat(secondCalcNumber));
     }
@@ -73,21 +75,26 @@ function App() {
   }
 
   const checkDot = () => {
-    if (!operator && !firstCalcNumber.includes('.')) {
+    if ((!operator && !firstCalcNumber.includes('.')) && (firstCalcNumber !== '')) {
       onClickNumber('.');
     }
-    if (operator && !secondCalcNumber.includes('.')) {
+    if ((operator && !secondCalcNumber.includes('.')) && (secondCalcNumber !== '')) {
       onClickNumber('.');
     }
   }
 
   useEffect(() => {
     if (result === 0) {
-      alert("결과값이 0 입니다");
+      alert("결과가 0 입니다");
       onClickClear();
-    } else if (result === Infinity) {
-      alert("숫자가 아닙니다");
+    } 
+    if (result === Infinity) {
+      alert("숫자값이 아닙니다");
       onClickClear();
+    }
+    if (isNaN(result) === true) {
+      onClickClear();
+      alert("숫자값이 아닙니다");
     }
   },[result]);
 
@@ -97,10 +104,6 @@ function App() {
       setFirstCalcNumber(result);
     }
   }, [result])
-
-  useEffect(() => {
-
-  })
 
   // useEffect(() => {
   //   console.log("firstCalcNumber: ", firstCalcNumber, "secondCalcNumber: " , secondCalcNumber, "operator", operator);
