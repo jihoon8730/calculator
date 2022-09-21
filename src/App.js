@@ -1,5 +1,7 @@
 import './App.css';
 import {  useEffect, useState } from 'react';
+import Decimal from 'decimal.js';
+// import Big from 'big.js';
 
 function App() {
 
@@ -18,10 +20,8 @@ function App() {
       setFirstCalcNumber([...firstCalcNumber , number].join(''));
     } else {
       setSecondCalcNumber([...secondCalcNumber , number].join(''));
-    } 
+    }
   }
-  
-  //render, input 구분
 
   //clear 함수
   const onClickClear = () => {
@@ -30,29 +30,52 @@ function App() {
     setSecondCalcNumber('');
     setResult('');
   }
-  
-
-  // 정확한 계산을 위해 실수 계산을 할때에는 Math.ceil()같은 메소드를 사용하거나 정수로 변환을 하여 사용하는게 좋다
-  // 예시) 0.100000000000와 같은 부정확한 계산을 해야할때는 toFixed()와 같이 어림수를 만들어 줘야 한다 .. 모던 자바스크립트
-  const handleOperator = () => {
-    if (operator === '+') {
-      setResult(Math.floor((parseFloat(firstCalcNumber) + parseFloat(secondCalcNumber)) * 1000) / 1000);
-    } else if (operator === '-') {
-      setResult(Math.floor((parseFloat(firstCalcNumber) - parseFloat(secondCalcNumber)) * 1000) / 1000);
-    } else if (operator === 'X') {
-      setResult(Math.floor((parseFloat(firstCalcNumber) * parseFloat(secondCalcNumber)) * 1000) / 1000);
-    } else if (operator === '/') {
-      setResult(parseFloat(firstCalcNumber) / parseFloat(secondCalcNumber));
-    }
-      setOperator('');
-      setSecondCalcNumber(''); 
-  }
 
   const checkOperator = () => {
     if (!operator) {
       alert("연산기호를 입력해 주세요");
     }
   }
+
+  const checkDot = () => {
+    if ((!operator && !firstCalcNumber.includes('.')) && (firstCalcNumber !== '')) {
+      onClickNumber('.');
+    }
+    if ((operator && !secondCalcNumber.includes('.')) && (secondCalcNumber !== '')) {
+      onClickNumber('.');
+    }
+  }
+
+  const checkNumberZero = () => {
+    if ((!operator && firstCalcNumber !== '0')) {
+      onClickNumber('0');
+    }
+    if ((operator && secondCalcNumber !== '0')) {
+      onClickNumber('0');
+    }
+  }
+  
+  // 정확한 계산을 위해 실수 계산을 할때에는 Math.ceil()같은 메소드를 사용하거나 정수로 변환을 하여 사용하는게 좋다
+  // 예시) 0.100000000000와 같은 부정확한 계산을 해야할때는 toFixed()와 같이 어림수를 만들어 줘야 한다 .. 모던 자바스크립트
+  // toFixed()사용시 문자열(string)으로 출력 되고 반올림 
+  const handleOperator = () => {
+    let firstNumber = new Decimal(firstCalcNumber);
+    if (operator === '+') {
+      setResult(firstNumber.plus(secondCalcNumber));
+    } else if (operator === '-') {
+      setResult(firstNumber.minus(secondCalcNumber));
+    } else if (operator === 'X') {
+      setResult(firstNumber.times(secondCalcNumber));
+    } else if (operator === '/') {
+      setResult(firstNumber.div(secondCalcNumber));
+    }
+      setOperator('');
+      setSecondCalcNumber(''); 
+  }
+
+  useEffect(() => {
+    console.log(result);
+  }, [result])
 
   const handleKeyboardOperator = (e) => {
     if (isFinite(e.key)) {
@@ -72,15 +95,7 @@ function App() {
     } else if (e.key === '.') {
       checkDot(e.key);
     }
-  }
-
-  const checkDot = () => {
-    if ((!operator && !firstCalcNumber.includes('.')) && (firstCalcNumber !== '')) {
-      onClickNumber('.');
-    }
-    if ((operator && !secondCalcNumber.includes('.')) && (secondCalcNumber !== '')) {
-      onClickNumber('.');
-    }
+    
   }
 
   useEffect(() => {
@@ -206,9 +221,7 @@ function App() {
       </div>
       <div className='numbers'>
         <button className='number-btn orange-color' onClick={onClickClear}>AC</button>
-        <button className='number-btn' onClick={() => {
-          onClickNumber('0');
-        }}>0</button>
+        <button className='number-btn' onClick={checkNumberZero}>0</button>
         <button className='number-btn orange-color' onClick={() => {
           handleOperator()
           checkOperator();
@@ -219,16 +232,7 @@ function App() {
         }}>/</button>
       </div>
       <div className='numbers'>
-      <button className='number-btn-dot' onClick={
-        // 조건식(if)를 통한 소수점 한번만 찍기
-        // 현재의 문제점 
-        // 소수점이 ....계속 찍히는 현상
-        // 시도해본 방향
-        // if문을 통해 첫번째 숫자 배열안에 닷 기호가 없으면 닷 추가 두번째 숫자가 들어갈 배열안에 닷 기호가 없으면 닷 추가
-        // 그렇게 시도해보니 문제점
-        // 첫번째 숫자 배열안에서는 닷추가가 한번만 성공적으로 잘됨
-        // 그러나 두번째 숫자 배열안에서 부터는 안되거나 여전히 계속 ...찍히는 현상이 발생됨
-        checkDot}>.</button>
+      <button className='number-btn-dot' onClick={checkDot}>.</button>
       </div>
     </div>
     </>
