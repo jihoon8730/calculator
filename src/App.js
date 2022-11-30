@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import Decimal from "decimal.js";
 
 function App() {
-  const [firstCalcNumber, setFirstCalcNumber] = useState('');
-  const [secondCalcNumber, setSecondCalcNumber] = useState('');
-  const [operator, setOperator] = useState('');
-  const [result, setResult] = useState('');
+  const [firstCalcNumber, setFirstCalcNumber] = useState("");
+  const [secondCalcNumber, setSecondCalcNumber] = useState("");
+  const [operator, setOperator] = useState("");
+  const [result, setResult] = useState("");
 
   const onClickNumber = (number) => {
     if (!operator) {
-      setFirstCalcNumber([...firstCalcNumber, number].join(''));
+      setFirstCalcNumber([...firstCalcNumber, number].join(""));
     } else {
-      setSecondCalcNumber([...secondCalcNumber, number].join(''));
+      setSecondCalcNumber([...secondCalcNumber, number].join(""));
     }
   };
 
