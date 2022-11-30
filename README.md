@@ -12,4 +12,7 @@ https://jihoon8730.github.io/calculator/
 - 소수점 계산<br />
 - 키보드 입력 지원
 <hr/>
+
+<h3>2022. 11. 30</h3>
+<p>Typescript 템플릿 설치 및 준비</p>
 <img src='./calculator.gif' alt='실패'>
